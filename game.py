@@ -6,6 +6,8 @@ def mylog(s):
 
 class Transition:
     def __init__(self, trigger_fn, exec_fn, name = ""):
+        if name != "":
+            mylog("[adding event <%s> ]" % name)
         self.trigger_fn = trigger_fn # if ...
         self.exec_fn = exec_fn # then ...
         self.name = name
@@ -57,11 +59,11 @@ class Game:
     #def get_events_ctx():
     #    pass # unimplemented
 
-    def add_event(self, t, e):
-        self.possible_events.append(Event(t, e))
+    def add_event(self, t, e, name=""):
+        self.possible_events.append(Event(t, e, name))
 
-    def add_action(self, t, e):
-        self.possible_actions.append(Action(t, e))
+    def add_action(self, t, e, name=""):
+        self.possible_actions.append(Action(t, e, name))
 
     def exec_actions(self, actions):
         # maybe side effects can be returned from here
@@ -84,6 +86,9 @@ class Game:
 
         while not self.is_over:
             actions = self.scan_actions()
+            for a in actions:
+                if a.name:
+                    mylog("[detected action <%s>]" % a.name)
             self.exec_actions(actions)
 
             self.update_view()
@@ -91,6 +96,9 @@ class Game:
             clock.tick(speed)
 
             events = self.scan_events()
+            for e in events:
+                if e.name:
+                    mylog("[detected event <%s>]" % e.name)
             self.exec_events(events)
 
             self.update_view()
